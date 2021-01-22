@@ -1,0 +1,25 @@
+Lab 2.9 - Steps in SQLWorkbench:
+
+1. May:
+CREATE TABLE sakila.rental_may AS
+    SELECT *
+    FROM sakila.rental
+    WHERE MONTH(rental_date) = 5;
+
+2. June:
+CREATE TABLE sakila.rental_june AS
+    SELECT *
+    FROM sakila.rental
+    WHERE MONTH(rental_date) = 6;
+
+3. #rentals per customer May
+SELECT count(rental_id) as number_customers, customer_id
+FROM sakila.rental_may
+GROUP BY customer_id;
+
+4. #rentals per customer June
+SELECT count(rental_id) as number_customers, customer_id
+FROM sakila.rental_june
+GROUP BY customer_id;
+
+>> now moving to Python!
