@@ -1,0 +1,46 @@
+1. Rank films by length (filter out the rows that have nulls or 0s in length column). In your output, only select the columns title, length, and the rank.
+1.
+SELECT title, length, RANK() OVER(order by length DESC) AS 'Rank' 
+FROM sakila.film WHERE length <> 0 AND length <> ' ' AND length IS NOT NULL;
+
+2. Rank films by length within the rating category (filter out the rows that have nulls or 0s in length column). In your output, only select the columns title, length, rating and the rank.
+2.
+SELECT title, length, rating, RANK() OVER(PARTITION BY rating ORDER BY length desc) AS 'Rank' 
+FROM sakila.film WHERE length <> 0 AND length <> ' ' AND length IS NOT NULL;
+
+3. How many films are there for each of the categories in the category table. Use appropriate join to write this query
+3.
+SELECT cat.name, film.film_id, COUNT(*) as Count
+FROM sakila.category AS cat
+LEFT JOIN sakila.film_category AS filmcat
+ON filmcat.category_id = cat.category_id
+INNER JOIN sakila.film AS film
+ON film.film_id=filmcat.film_id
+GROUP BY cat.name;
+
+
+4.Which actor has appeared in the most films?
+SELECT act.first_name, act.last_name, film.film_id, count(*) as total_films
+FROM sakila.actor AS act
+RIGHT JOIN sakila.film_actor AS filmact
+ON act.actor_id = filmact.actor_id 
+INNER JOIN sakila.film AS film
+ON filmact.film_id=film.film_id
+GROUP by act.last_name
+ORDER by total_films DESC;
+
+NEW>>
+SELECT act.first_name, act.last_name, filmact.film_id, count(act.actor_id) as total_films
+FROM sakila.actor AS act
+RIGHT JOIN sakila.film_actor AS filmact
+ON act.actor_id = filmact.actor_id 
+GROUP by act.actor_id
+ORDER by total_films DESC;
+
+5. Most active customer (the customer that has rented the most number of films)
+SELECT cust.first_name, cust.last_name, count(*) as total_rents
+FROM sakila.customer AS cust
+INNER JOIN sakila.rental AS ren
+ON cust.customer_id = ren.customer_id
+GROUP by cust.customer_id
+ORDER by total_rents DESC;
