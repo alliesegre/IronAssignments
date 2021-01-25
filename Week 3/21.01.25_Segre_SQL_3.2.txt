@@ -1,0 +1,73 @@
+- Write a query to display for each store its store ID, city, and country.
+SELECT * FROM sakila.store AS st
+JOIN sakila.address AS ad
+ON st.address_id = ad.address_id
+JOIN sakila.city AS ci
+ON ad.city_id = ci.city_id 
+JOIN sakila.country AS co
+ON ci.country_id = co.country_id;
+
+- Write a query to display how much business, in dollars, each store brought in.
+SELECT st.store_id, SUM(p.amount) AS total_dollar
+FROM sakila.store AS st
+JOIN sakila.staff AS emp
+ON st.store_id = emp.store_id
+JOIN sakila.payment AS p
+ON emp.staff_id = p.staff_id
+JOIN sakila.country AS co
+ON p.country_id = co.country_id
+ORDER BY total_dollar DESC;
+
+- What is the average running time of films by category?
+SELECT
+cat.name,
+AVG(fl.length) AS average_length
+FROM sakila.film AS fl
+JOIN sakila.film_category AS fca USING(film_id)
+JOIN sakila.category AS cat USING (category_id)
+GROUP BY cat.name;
+
+- Which film categories are longest?
+SELECT
+cat.name,
+AVG(fl.length) AS average_length
+FROM sakila.film AS fl
+JOIN sakila.film_category AS fca USING(film_id)
+JOIN sakila.category AS cat USING (category_id)
+ORDER BY average_length DESC;
+
+- Display the most frequently rented movies in descending order.
+select
+fi.title,
+COUNT(fi.film_id) AS count
+FROM sakila.rental AS re
+JOIN sakila.inventory AS inv USING (inventory_id)
+JOIN sakila.film AS fi USING(film_id)
+GROUP BY fi.film_id
+ORDER BY count DESC;
+
+- List the top five genres in gross revenue in descending order.SELECT cat.name,
+SUM(p.amount) as revenue
+FROM sakila.payment AS p
+JOIN sakila.rental AS re
+USING (rental_id)
+JOIN sakila.inventory AS inv
+USING (inventory_id)
+JOIN sakila.film AS film
+USING (film_id)
+JOIN sakila.film_category AS fcat
+USING (film_id)
+JOIN sakila.category AS cat
+USING (category_id)
+GROUP BY cat.category_id
+ORDER BY revenue DESC;
+
+- Is "Academy Dinosaur" available for rent from Store 1?
+SELECT
+fl.title,
+inv.store_id
+FROM sakila.film AS fl
+JOIN sakila.inventory AS inv USING(film_id)
+WHERE fl.title = 'Academy Dinosaur'
+GROUP BY inv.store_id
+HAVING inv.store_id = 1;
