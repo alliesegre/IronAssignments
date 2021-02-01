@@ -1,0 +1,35 @@
+Get all pairs of actors that worked together.
+SELECT a1.actor_id, a2.actor_id
+FROM sakila.film_actor AS a1
+JOIN sakila.film_actor AS a2
+ON a1.actor_id <> a2.actor_id AND a1.film_id = a2.film_id;
+
+Get all pairs of customers that have rented the same film more than 3 times.
+SELECT 
+t1.customer_id as customer_id1,
+t2.customer_id as customer_id2,
+count(*) as coincidences
+FROM
+(SELECT re.customer_id, inv.film_id
+FROM sakila.rental AS re
+JOIN sakila.inventory AS inv
+ON re.inventory_id = inv.inventory_id 
+) AS t1
+JOIN 
+(SELECT re.customer_id, inv.film_id
+FROM sakila.rental AS re
+JOIN sakila.inventory AS inv
+ON re.inventory_id = inv.inventory_id 
+) AS t2
+ON t1.film_id = t2.film_id AND t1.customer_id <> t2.customer_id
+GROUP BY t1.customer_id, t2.customer_id
+HAVING coincidences > 3
+ORDER BY t1.customer_id, t2.customer_id;
+
+Get all possible pairs of actors and films.
+SELECT * FROM(
+SELECT  DISTINCT(concat(actor.first_name,' ',actor.last_name) ) as actor  FROM sakila.`actor`
+) SUB1
+CROSS JOIN (
+SELECT DISTINCT film.title FROM sakila.film
+) SUB2;
