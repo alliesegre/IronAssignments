@@ -14,3 +14,16 @@ INNER JOIN actor ac1 ON ac2.actor_id= fact2.actor_id;
 INNER JOIN sakila.actor ac2
 
 2.For each film, list actor that has acted in more films.
+select f.title, concat(a.first_name, ' ', a.last_name) as best_actor
+from (
+  select film_id, actor_id, rank() over (
+    partition by film_id
+    order by num_films
+    desc
+  ) as m
+from film_actor
+inner join actor_movies
+using (actor_id)) t
+inner join actor a on t.actor_id = a.actor_id
+inner join film f on t.film_id = f.film_id
+where m = 1;
